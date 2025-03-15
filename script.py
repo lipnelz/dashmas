@@ -47,7 +47,8 @@ def get_status(address: str) -> None:
         if response.status_code == 200:
             # Parse JSON
             response_json = response.json()
-            print("Réponse de l'API :", response_json)
+            # Correctly display JSON
+            print(json.dumps(response_json, indent=4))
         else:
             print(f"Erreur: {response.status_code}")
     except requests.exceptions.RequestException as e:
