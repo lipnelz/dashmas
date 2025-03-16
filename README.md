@@ -15,6 +15,17 @@ This project is a graphical application that visualizes data from a Massa node. 
 - Python 3.x
 - Python libraries: `requests`, `matplotlib`, `tkinter`
 
+## Usage
+
+A file with Massa node address must be next to the `main.py`.
+
+```
+dashmas
+├── main.py
+└── address.txt
+```
+
+The content of `address.txt` is the raw Massa node address, shuch as `AU12gAkmGeozFceJD4tQmbVvihYdX2KyWZcYLL8xdYZeP4EuWYdex`
 
 ## Documentation
 
