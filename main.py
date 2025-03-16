@@ -2,9 +2,11 @@ import requests
 import json
 import tkinter as tk
 import matplotlib.pyplot as plt
+import re
 from matplotlib.ticker import ScalarFormatter
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import re
+from typing import Tuple, List
+from datetime import datetime
 
 def extract_address_from_file(file_path: str) -> str:
     """
@@ -84,7 +86,7 @@ def get_addresses(address: str) -> dict:
         print(f"An error occurred: {e}")
         return {}
 
-def extract_data(json_data: dict) -> tuple[str, int, list[int], list[int], list[int]]:
+def extract_data(json_data: dict) -> Tuple[str, int, List[int], List[int], List[int]]:
     """
     Extract useful JSON data.
 
@@ -101,13 +103,14 @@ def extract_data(json_data: dict) -> tuple[str, int, list[int], list[int], list[
         return final_balance, final_roll_count, cycles, ok_counts, nok_counts
     return "", 0, [], [], []
 
-def refresh_data(address: str, label_balance: tk.Label, label_roll_count: tk.Label, ax: plt.Axes, canvas: FigureCanvasTkAgg) -> None:
+def refresh_data(address: str, label_balance: tk.Label, label_roll_count: tk.Label, label_timestamp: tk.Label, ax: plt.Axes, canvas: FigureCanvasTkAgg) -> None:
     """
     Refresh data and update the UI.
 
     :param address: Massa node address.
     :param label_balance: Label balance object.
     :param label_roll_count: Label roll count object.
+    :param label_timestamp: Label to display the timestamp.
     :param ax: Axes object.
     :param canvas: Canvas object.
     """
@@ -121,10 +124,13 @@ def refresh_data(address: str, label_balance: tk.Label, label_roll_count: tk.Lab
     label_balance.config(text=f"Final Balance: {final_balance}")
     label_roll_count.config(text=f"Final Roll Count: {final_roll_count}")
 
+    # Update timestamp label
+    label_timestamp.config(text=f"Last Updated: " + datetime.now().strftime("%H:%M:%S"))
+
     # Update plot
     ax.clear()
-    ax.plot(cycles, ok_counts, marker='o', linestyle='-', color='b')
     ax.plot(cycles, nok_counts, marker='o', linestyle='-', color='r')
+    ax.plot(cycles, ok_counts, marker='o', linestyle='-', color='b')
     ax.set_title('Validation per Cycle')
     ax.set_xlabel('Cycle')
     ax.set_ylabel('OK Count')
@@ -159,8 +165,8 @@ if __name__ == "__main__":
 
     # Create the plot
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(cycles, ok_counts, marker='o', linestyle='-', color='b')
     ax.plot(cycles, nok_counts, marker='o', linestyle='-', color='r')
+    ax.plot(cycles, ok_counts, marker='o', linestyle='-', color='b')
     ax.set_title('Validation per Cycle')
     ax.set_xlabel('Cycle')
     ax.set_ylabel('OK Count')
@@ -175,8 +181,13 @@ if __name__ == "__main__":
     canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
     # Create Refresh Button
-    refresh_button = tk.Button(root, text="Refresh", command=lambda: refresh_data(address, label_balance, label_roll_count, ax, canvas))
+    refresh_button = tk.Button(root, text="Refresh", command=lambda: refresh_data(address, label_balance, label_roll_count, label_timestamp, ax, canvas))
     refresh_button.pack(pady=5)
 
+    # Add timestamp label
+    label_timestamp = tk.Label(root, text="Last Updated: " + datetime.now().strftime("%H:%M:%S"))
+    label_timestamp.pack(pady=5, anchor="e")  # Align to the right
+
     # Run app
+    root.protocol("WM_DELETE_WINDOW", root.destroy)
     root.mainloop()
