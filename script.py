@@ -1,7 +1,7 @@
 import requests
 import json
+import tkinter as tk
 import re
-
 
 def extract_address_from_file(file_path):
     """
@@ -57,7 +57,7 @@ def get_status(address: str) -> None:
         print(f"Une erreur s'est produite : {e}")
 
 
-def get_addresses(address: str) -> None:
+def get_addresses(address: str) -> str:
     # Define API and URL
     url = 'https://mainnet.massa.net/api/v2'
     headers = {
@@ -82,6 +82,7 @@ def get_addresses(address: str) -> None:
             response_json = response.json()
             # Correctly display JSON
             print(json.dumps(response_json, indent=4))
+            return response_json
         else:
             print(f"Erreur: {response.status_code}")
     except requests.exceptions.RequestException as e:
@@ -91,4 +92,22 @@ if __name__ == "__main__":
     address = extract_address_from_file('address.txt')
     print("Querry on: " + address)
     #get_status(address)
-    get_addresses(address)
+    json_data = get_addresses(address)
+
+    # Extraire les valeurs
+    final_balance = json_data["result"][0]["final_balance"]
+    final_roll_count = json_data["result"][0]["final_roll_count"]
+
+    # Créer la fenêtre principale
+    root = tk.Tk()
+    root.title("Affichage des valeurs JSON")
+
+    # Créer des étiquettes pour afficher les valeurs
+    label_balance = tk.Label(root, text=f"Final Balance: {final_balance}")
+    label_balance.pack(pady=5)
+
+    label_roll_count = tk.Label(root, text=f"Final Roll Count: {final_roll_count}")
+    label_roll_count.pack(pady=5)
+
+    # Exécuter l'application
+    root.mainloop()
