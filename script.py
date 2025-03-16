@@ -1,6 +1,9 @@
 import requests
 import json
 import tkinter as tk
+import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import re
 
 def extract_address_from_file(file_path):
@@ -94,20 +97,40 @@ if __name__ == "__main__":
     #get_status(address)
     json_data = get_addresses(address)
 
-    # Extraire les valeurs
+    # Extract usefull data
     final_balance = json_data["result"][0]["final_balance"]
     final_roll_count = json_data["result"][0]["final_roll_count"]
+    cycles = [info["cycle"] for info in json_data["result"][0]["cycle_infos"]]
+    ok_counts = [info["ok_count"] for info in json_data["result"][0]["cycle_infos"]]
 
-    # Créer la fenêtre principale
+    # Create main window
     root = tk.Tk()
-    root.title("Affichage des valeurs JSON")
+    root.title("Display Values and Graph")
 
-    # Créer des étiquettes pour afficher les valeurs
+    # Create Labels
     label_balance = tk.Label(root, text=f"Final Balance: {final_balance}")
     label_balance.pack(pady=5)
-
     label_roll_count = tk.Label(root, text=f"Final Roll Count: {final_roll_count}")
     label_roll_count.pack(pady=5)
 
-    # Exécuter l'application
+    plot_frame = tk.Frame(root)
+    plot_frame.pack(fill=tk.BOTH, expand=True)
+
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(cycles, ok_counts, marker='o', linestyle='-', color='b')
+    ax.set_title('Validation per Cycle')
+    ax.set_xlabel('Cycle')
+    ax.set_ylabel('OK Count')
+    ax.grid(True)
+
+    # Format x-axis to show decimal values
+    ax.xaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+
+    # Embed the plot in the tkinter window
+    canvas = FigureCanvasTkAgg(fig, master=plot_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+    # Run app
     root.mainloop()
