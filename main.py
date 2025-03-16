@@ -1,8 +1,6 @@
-import requests
-import json
 import tkinter as tk
 import matplotlib.pyplot as plt
-import re
+import jrequests as jreq
 from matplotlib.ticker import ScalarFormatter
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from typing import Tuple, List
@@ -25,66 +23,6 @@ def extract_address_from_file(file_path: str) -> str:
     except Exception as e:
         return f"An error occurred: {e}"
 
-
-def get_status(address: str) -> None:
-    """
-    Print the status from a given address
-
-    :param address: The address to querry.
-    """
-    # Define API and URL
-    url = 'https://mainnet.massa.net/api/v2'
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    data = {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "get_status",
-         "params": [[address]]
-    }
-
-    try:
-        # Send POST request
-        response = requests.post(url, headers=headers, data=json.dumps(data))
-        # Check response status
-        if response.status_code == 200:
-            # Parse JSON
-            response_json = response.json()
-            print(json.dumps(response_json, indent=4))
-        else:
-            print(f"Error: {response.status_code}")
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
-
-def get_addresses(address: str) -> dict:
-    # Define API and URL
-    url = 'https://mainnet.massa.net/api/v2'
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    data = {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "get_addresses",
-         "params": [[address]]
-    }
-
-    try:
-        # Send POST request
-        response = requests.post(url, headers=headers, data=json.dumps(data))
-        # Check response status
-        if response.status_code == 200:
-            # Parse JSON
-            response_json = response.json()
-            print(json.dumps(response_json, indent=4))
-            return response_json
-        else:
-            print(f"Error: {response.status_code}")
-            return {}
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
-        return {}
 
 def extract_data(json_data: dict) -> Tuple[str, int, List[int], List[int], List[int]]:
     """
@@ -145,7 +83,7 @@ if __name__ == "__main__":
     print("Querry on: " + address)
 
     #get_status(address)
-    json_data = get_addresses(address)
+    json_data = jreq.get_addresses(address)
 
     # Extract useful data using the function
     final_balance, final_roll_count, cycles, ok_counts , nok_counts= extract_data(json_data)
