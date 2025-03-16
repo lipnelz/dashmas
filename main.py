@@ -84,7 +84,7 @@ def get_addresses(address: str) -> dict:
         print(f"An error occurred: {e}")
         return {}
 
-def extract_data(json_data: dict) -> Tuple[str, int, List[int], List[int]]:
+def extract_data(json_data: dict) -> tuple[str, int, list[int], list[int]]:
     """
     Extract useful JSON data.
 
