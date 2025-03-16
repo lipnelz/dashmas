@@ -2,7 +2,7 @@
 
 ## Description
 
-This project is a graphical application that visualizes data from a Massa node. It displays information such as the final balance, final roll count, and a graph of OK counts per cycle. The application uses `tkinter` for the graphical interface and `matplotlib` for plotting graphs.
+This project is a graphical application that visualizes data from a Massa node. It displays information such as the final balance, final roll count, and a graph of N/OK counts per cycle. The application uses `tkinter` for the graphical interface and `matplotlib` for plotting graphs.
 
 ## Features
 
