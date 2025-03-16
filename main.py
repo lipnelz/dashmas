@@ -84,12 +84,12 @@ def get_addresses(address: str) -> dict:
         print(f"An error occurred: {e}")
         return {}
 
-def extract_data(json_data: dict) -> tuple[str, int, list[int], list[int]]:
+def extract_data(json_data: dict) -> tuple[str, int, list[int], list[int], list[int]]:
     """
     Extract useful JSON data.
 
     :param json_data: Input JSON data to parse.
-    :return: Tuple composed of final_balance, final_roll_count, cycles, and ok_counts.
+    :return: Tuple composed of final_balance, final_roll_count, cycles, ok_counts and nok_counts.
     """
     if "result" in json_data and len(json_data["result"]) > 0:
         result = json_data["result"][0]
@@ -97,8 +97,9 @@ def extract_data(json_data: dict) -> tuple[str, int, list[int], list[int]]:
         final_roll_count = result["final_roll_count"]
         cycles = [info["cycle"] for info in result["cycle_infos"]]
         ok_counts = [info["ok_count"] for info in result["cycle_infos"]]
-        return final_balance, final_roll_count, cycles, ok_counts
-    return "", 0, [], []
+        nok_counts = [info["nok_count"] for info in result["cycle_infos"]]
+        return final_balance, final_roll_count, cycles, ok_counts, nok_counts
+    return "", 0, [], [], []
 
 def refresh_data(address: str, label_balance: tk.Label, label_roll_count: tk.Label, ax: plt.Axes, canvas: FigureCanvasTkAgg) -> None:
     """
@@ -114,7 +115,7 @@ def refresh_data(address: str, label_balance: tk.Label, label_roll_count: tk.Lab
     json_data = get_addresses(address)
 
      # Extract useful data using the function
-    final_balance, final_roll_count, cycles, ok_counts = extract_data(json_data)
+    final_balance, final_roll_count, cycles, ok_counts, nok_counts = extract_data(json_data)
 
     # Update labels
     label_balance.config(text=f"Final Balance: {final_balance}")
@@ -123,7 +124,8 @@ def refresh_data(address: str, label_balance: tk.Label, label_roll_count: tk.Lab
     # Update plot
     ax.clear()
     ax.plot(cycles, ok_counts, marker='o', linestyle='-', color='b')
-    ax.set_title('OK Count par Cycle')
+    ax.plot(cycles, nok_counts, marker='o', linestyle='-', color='r')
+    ax.set_title('Validation per Cycle')
     ax.set_xlabel('Cycle')
     ax.set_ylabel('OK Count')
     ax.grid(True)
@@ -140,7 +142,7 @@ if __name__ == "__main__":
     json_data = get_addresses(address)
 
     # Extract useful data using the function
-    final_balance, final_roll_count, cycles, ok_counts = extract_data(json_data)
+    final_balance, final_roll_count, cycles, ok_counts , nok_counts= extract_data(json_data)
 
     # Create main window
     root = tk.Tk()
@@ -158,6 +160,7 @@ if __name__ == "__main__":
     # Create the plot
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(cycles, ok_counts, marker='o', linestyle='-', color='b')
+    ax.plot(cycles, nok_counts, marker='o', linestyle='-', color='r')
     ax.set_title('Validation per Cycle')
     ax.set_xlabel('Cycle')
     ax.set_ylabel('OK Count')
