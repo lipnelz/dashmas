@@ -22,10 +22,11 @@ A file with Massa node address must be next to the `main.py`.
 ```
 dashmas
 ├── main.py
+├── jrequests.py
 └── address.txt
 ```
 
-The content of `address.txt` is the raw Massa node address, shuch as `AU12gAkmGeozFceJD4tQmbVvihYdX2KyWZcYLL8xdYZeP4EuWYdex`
+The content of `address.txt` is the raw Massa node address, shuch as `AU12gAkmGeozFceJD4tQmbVvihYdX2KyWZcYLL8xdYZeP4EuWYdex`.
 
 ## Documentation
 
