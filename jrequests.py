@@ -23,7 +23,7 @@ def get_status(address: str) -> None:
         # Send POST request
         response = requests.post(url, headers=headers, data=json.dumps(data))
         # Check response status
-        if response.status_code == 200:
+        if response.status_code == requests.codes.ok::
             # Parse JSON
             response_json = response.json()
             print(json.dumps(response_json, indent=4))
@@ -49,7 +49,7 @@ def get_addresses(address: str) -> dict:
         # Send POST request
         response = requests.post(url, headers=headers, data=json.dumps(data))
         # Check response status
-        if response.status_code == 200:
+        if response.status_code == requests.codes.ok::
             # Parse JSON
             response_json = response.json()
             print(json.dumps(response_json, indent=4))
